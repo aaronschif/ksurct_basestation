@@ -52,17 +52,6 @@ video_area = builder.get_object('video_area')
 pipeline = PipelineManager(video_area, pipeline)
 
 window = builder.get_object("main_window")
-
-hb = builder.get_object('header')
-
-window.set_titlebar(hb)
-
-menu = builder.get_object('menu')
-app_menu = builder.get_object('app-menu')
-menu.bind_model(app_menu, None)
-# print(dir(builder.get_object('header')))
-# exit()
-
 window.show_all()
 
 

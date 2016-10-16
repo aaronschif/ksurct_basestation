@@ -29,7 +29,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.set_icon_from_file(str(here/'icons'/'ksurct.png'))
         self.add(main_box)
         PipelineManager(video_widget, pipeline)
-        self.set_titlebar(self._create_header())
+        # self.set_titlebar(self._create_header())
 
     def _create_header(self):
         menu = builder.get_object('menu')
