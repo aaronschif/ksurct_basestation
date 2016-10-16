@@ -57,7 +57,36 @@ video_area = builder.get_object('video_area')
 pipeline = PipelineManager(video_area, pipeline)
 
 window = builder.get_object("main_window")
+
+# hb = Gtk.HeaderBar()
+# hb.set_show_close_button(True)
+# hb.props.title = "ksurct Basestation"
+# window.set_titlebar(hb)
+# menu = Gtk.MenuButton()
+# hb.pack_start(menu)
+# menu.set_popup(None)
+
+hb = builder.get_object('header')
+
+window.set_titlebar(hb)
+
+menu = builder.get_object('menu')
+app_menu = builder.get_object('app-menu')
+menu.bind_model(app_menu, None)
+# print(dir(builder.get_object('header')))
+# exit()
+
 window.show_all()
-window.connect('destroy', lambda w: Gtk.main_quit())
+
+
+
+def on_destroy(win):
+    try:
+        Gtk.main_quit()
+    except KeyboardInterrupt:
+        pass
+
+window.connect('destroy', on_destroy)
+
 
 Gtk.main()
