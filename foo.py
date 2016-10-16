@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import signal
-
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gst', '1.0')
@@ -42,12 +40,9 @@ class PipelineManager(object):
         return Gst.BusSyncReply.PASS
 
 
-
-
 # pipeline = Gst.parse_launch('videotestsrc ! xvimagesink sync=false')
 pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! xvimagesink sync=false'
 # gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480' !  x264enc pass=qual quantizer=2 tune=zerolatency ! rtph264pay ! udpsink host=127.0.0.1 port=1234
-
 
 builder = Gtk.Builder()
 builder.add_from_file('foo.glade')
@@ -57,14 +52,6 @@ video_area = builder.get_object('video_area')
 pipeline = PipelineManager(video_area, pipeline)
 
 window = builder.get_object("main_window")
-
-# hb = Gtk.HeaderBar()
-# hb.set_show_close_button(True)
-# hb.props.title = "ksurct Basestation"
-# window.set_titlebar(hb)
-# menu = Gtk.MenuButton()
-# hb.pack_start(menu)
-# menu.set_popup(None)
 
 hb = builder.get_object('header')
 
