@@ -10,6 +10,25 @@
         <property name="popover">menu</property>
       </object>
     </child>
+    <child>
+      <object class="GtkEntry">
+        <property name="placeholder_text">robot address</property>
+      </object>
+      <packing>
+        <property name="pack-type">GTK_PACK_START</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton">
+        <child>
+          <object class="GtkImage" id="image1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-connect</property>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
 
   <object class="GtkPopover" id="menu">
