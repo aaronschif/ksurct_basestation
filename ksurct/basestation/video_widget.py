@@ -1,33 +1,22 @@
-from gi.repository import Gst, Gdk, GdkX11, GstVideo, Gtk
+from gi.repository import Gst, Gtk
 
 Gst.init(None)
 Gst.init_check(None)
 
 
-class PipelineManager(object):
-    def __init__(self, window, pipeline):
-        assert isinstance(window, Gtk.DrawingArea)
-        self.window = window
-        if isinstance(pipeline, str):
-            pipeline = Gst.parse_launch(pipeline)
+class GstWidget(Gtk.Box):
+    def __init__(self, pipeline):
+        super().__init__()
+        self.connect('realize', self._on_realize)
+        self._bin = Gst.parse_bin_from_description('videotestsrc', True)
 
-        self.pipeline = pipeline
-
-        bus = pipeline.get_bus()
-        bus.set_sync_handler(self.bus_callback)
+    def _on_realize(self, widget):
+        pipeline = Gst.Pipeline()
+        factory = pipeline.get_factory()
+        gtksink = factory.make('gtksink')
+        pipeline.add(gtksink)
+        pipeline.add(self._bin)
+        self._bin.link(gtksink)
+        self.pack_start(gtksink.props.widget, True, True, 0)
+        gtksink.props.widget.show()
         pipeline.set_state(Gst.State.PLAYING)
-
-    def bus_callback(self, bus, message):
-        if message.type is Gst.MessageType.ELEMENT:
-            if GstVideo.is_video_overlay_prepare_window_handle_message(message):
-                Gdk.threads_enter()
-                Gdk.Display.get_default().sync()
-                win = self.window.get_property('window')
-
-                if isinstance(win, GdkX11.X11Window):
-                    message.src.set_window_handle(win.get_xid())
-                else:
-                    print('Nope')
-
-                Gdk.threads_leave()
-        return Gst.BusSyncReply.PASS

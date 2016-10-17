@@ -12,59 +12,51 @@ from gi.repository import Gst, Gdk, GdkX11, GstVideo
 Gst.init(None)
 Gst.init_check(None)
 
-# Place 1
-from ctypes import cdll
-x11 = cdll.LoadLibrary('libX11.so')
-x11.XInitThreads()
+# pipeline = Gst.parse_launch('videotestsrc ! xvimagesink sync=false')
+# pipeline = Gst.parse_launch('videotestsrc ! gtksink')
+# gst_bin = Gst.parse_bin_from_description('videotestsrc', True)
+#
+# pipeline = Gst.Pipeline()
+# factory = pipeline.get_factory()
+# gtksink = factory.make('gtksink')
+# pipeline.add(gtksink)
+# pipeline.add(gst_bin)
+# gst_bin.link(gtksink)
 
-# [xcb] Unknown request in queue while dequeuing
-# [xcb] Most likely this is a multi-threaded client and XInitThreads has not been called
-# [xcb] Aborting, sorry about that.
-# python3: ../../src/xcb_io.c:179: dequeue_pending_request: Assertion `!xcb_xlib_unknown_req_in_deq' failed.
 
-# (foo.py:31933): Gdk-WARNING **: foo.py: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.
+class GstWidget(Gtk.Box):
+    def __init__(self, pipeline):
+        super().__init__()
+        self.connect('realize', self._on_realize)
+        self._bin = Gst.parse_bin_from_description('videotestsrc', True)
 
-class PipelineManager(object):
-    def __init__(self, window, pipeline):
-        self.window = window
-        if isinstance(pipeline, str):
-            pipeline = Gst.parse_launch(pipeline)
-
-        self.pipeline = pipeline
-
-        bus = pipeline.get_bus()
-        bus.set_sync_handler(self.bus_callback)
+    def _on_realize(self, widget):
+        pipeline = Gst.Pipeline()
+        factory = pipeline.get_factory()
+        gtksink = factory.make('gtksink')
+        pipeline.add(gtksink)
+        pipeline.add(self._bin)
+        self._bin.link(gtksink)
+        self.pack_start(gtksink.props.widget, True, True, 0)
+        gtksink.props.widget.show()
         pipeline.set_state(Gst.State.PLAYING)
 
-    def bus_callback(self, bus, message):
-        if message.type is Gst.MessageType.ELEMENT:
-            if GstVideo.is_video_overlay_prepare_window_handle_message(message):
-                Gdk.threads_enter()
-                Gdk.Display.get_default().sync()
-                win = self.window.get_property('window')
-
-                if isinstance(win, GdkX11.X11Window):
-                    message.src.set_window_handle(win.get_xid())
-                else:
-                    print('Nope')
-
-                Gdk.threads_leave()
-        return Gst.BusSyncReply.PASS
-
-
-pipeline = Gst.parse_launch('videotestsrc ! xvimagesink sync=false')
 
 window = Gtk.ApplicationWindow()
 
 header_bar = Gtk.HeaderBar()
 header_bar.set_show_close_button(True)
-# window.set_titlebar(header_bar)  # Place 2
+window.set_titlebar(header_bar)  # Place 2
 
-drawing_area = Gtk.DrawingArea()
-drawing_area.connect('realize', lambda widget: PipelineManager(widget, pipeline))
-window.add(drawing_area)
+box = Gtk.Box()
+box.pack_start(Gtk.Button('asdf'), True, True, 0)
+# box.pack_start(gtksink.props.widget, True, True, 0)
+box.pack_start(GstWidget('videotestsrc'), True, True, 0)
+
+window.add(box)
 
 window.show_all()
+# pipeline.set_state(Gst.State.PLAYING)
 
 def on_destroy(win):
     try:
