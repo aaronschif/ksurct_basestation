@@ -8,7 +8,7 @@ class GstWidget(Gtk.Box):
     def __init__(self, pipeline):
         super().__init__()
         self.connect('realize', self._on_realize)
-        self._bin = Gst.parse_bin_from_description('videotestsrc', True)
+        self._bin = Gst.parse_bin_from_description(pipeline, True)
 
     def _on_realize(self, widget):
         pipeline = Gst.Pipeline()

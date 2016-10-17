@@ -17,8 +17,8 @@ relation_widget = builder.get_object('relation_widget')
 header = builder.get_object('header')
 
 # gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480' !  x264enc pass=qual quantizer=2 tune=zerolatency ! rtph264pay ! udpsink host=127.0.0.1 port=1234
-pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264'
-pipeline = 'videotestsrc'
+pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! videoconvert'
+# pipeline = 'videotestsrc'
 
 
 class AppWindow(Gtk.ApplicationWindow):
