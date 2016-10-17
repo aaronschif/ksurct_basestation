@@ -5,6 +5,7 @@
   <object class="GtkHeaderBar" id="header">
     <property name="show_close_button">True</property>
     <property name="title">ksurct Basestation</property>
+    <property name="subtitle">2016</property>
     <child>
       <object class="GtkMenuButton">
         <property name="popover">menu</property>

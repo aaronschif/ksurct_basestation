@@ -1,16 +1,28 @@
 #!/usr/bin/env python
 
+from pprint import pprint
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gst', '1.0')
 gi.require_version('GstVideo', '1.0')
 
-from gi.repository import Gtk
+from gi.repository import Gtk, xlib
 from gi.repository import Gst, Gdk, GdkX11, GstVideo
 Gst.init(None)
-
 Gst.init_check(None)
 
+# Place 1
+from ctypes import cdll
+x11 = cdll.LoadLibrary('libX11.so')
+x11.XInitThreads()
+
+# [xcb] Unknown request in queue while dequeuing
+# [xcb] Most likely this is a multi-threaded client and XInitThreads has not been called
+# [xcb] Aborting, sorry about that.
+# python3: ../../src/xcb_io.c:179: dequeue_pending_request: Assertion `!xcb_xlib_unknown_req_in_deq' failed.
+
+# (foo.py:31933): Gdk-WARNING **: foo.py: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.
 
 class PipelineManager(object):
     def __init__(self, window, pipeline):
@@ -40,21 +52,19 @@ class PipelineManager(object):
         return Gst.BusSyncReply.PASS
 
 
-# pipeline = Gst.parse_launch('videotestsrc ! xvimagesink sync=false')
-pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! xvimagesink sync=false'
-# gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480' !  x264enc pass=qual quantizer=2 tune=zerolatency ! rtph264pay ! udpsink host=127.0.0.1 port=1234
+pipeline = Gst.parse_launch('videotestsrc ! xvimagesink sync=false')
 
-builder = Gtk.Builder()
-builder.add_from_file('foo.glade')
+window = Gtk.ApplicationWindow()
 
-video_area = builder.get_object('video_area')
+header_bar = Gtk.HeaderBar()
+header_bar.set_show_close_button(True)
+# window.set_titlebar(header_bar)  # Place 2
 
-pipeline = PipelineManager(video_area, pipeline)
+drawing_area = Gtk.DrawingArea()
+drawing_area.connect('realize', lambda widget: PipelineManager(widget, pipeline))
+window.add(drawing_area)
 
-window = builder.get_object("main_window")
 window.show_all()
-
-
 
 def on_destroy(win):
     try:
@@ -63,6 +73,5 @@ def on_destroy(win):
         pass
 
 window.connect('destroy', on_destroy)
-
 
 Gtk.main()

@@ -18,6 +18,7 @@ video_widget = builder.get_object('video_widget')
 relation_widget = builder.get_object('relation_widget')
 header = builder.get_object('header')
 
+# gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480' !  x264enc pass=qual quantizer=2 tune=zerolatency ! rtph264pay ! udpsink host=127.0.0.1 port=1234
 pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! xvimagesink sync=false'
 pipeline = 'videotestsrc ! xvimagesink sync=false'
 
@@ -54,9 +55,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def _draw_relation_widget(self, widget, cairo):
         from time import time
-        cairo.set_source_rgb(0, 0, 0)
+        cairo.set_source_rgb(.5, .5, .5)
         cairo.paint()
-        cairo.set_source_rgb(100, 0, 0)
+        cairo.set_source_rgb(1, 0, 0)
         cairo.rectangle(20, 20, 20, 20 + 10*(time()%40))
         cairo.stroke()
 
