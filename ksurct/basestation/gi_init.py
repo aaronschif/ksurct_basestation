@@ -1,6 +1,6 @@
 import sys
 sys.path.append('/usr/lib/python3/dist-packages/')
-import gi, cairo
+import gi, cairo  # noqa
 sys.path.pop()
 
 gi.require_version('Gtk', '3.0')
