@@ -1,3 +1,7 @@
+"""
+Package to find system gobject libaries.
+"""
+
 import sys
 sys.path.append('/usr/lib/python3/dist-packages/')
 import gi, cairo  # noqa

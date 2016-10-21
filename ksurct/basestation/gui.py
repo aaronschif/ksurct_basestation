@@ -12,17 +12,12 @@ builder = Gtk.Builder()
 builder.add_from_string(pkgutil.get_data(__package__, 'glade/widgets.glade').decode('utf-8'))
 builder.add_from_string(pkgutil.get_data(__package__, 'glade/header.glade').decode('utf-8'))
 
-# gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480' !  x264enc pass=qual quantizer=2 tune=zerolatency ! rtph264pay ! udpsink host=127.0.0.1 port=1234
-pipeline = 'udpsrc port=1234 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! videoconvert'
-pipeline = 'videotestsrc'
-
 
 class AppWindow(Gtk.ApplicationWindow):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         main_box = builder.get_object('main_box')
-        video_area = builder.get_object('video_area')
         self.relation_widget = builder.get_object('relation_widget')
 
         self.buffer_log = builder.get_object('log')
@@ -30,9 +25,6 @@ class AppWindow(Gtk.ApplicationWindow):
         self.set_icon_from_file(str(here/'icons'/'ksurct.png'))
         self.add(main_box)
         self.set_titlebar(self._create_header())
-
-        # video_area.pack_start(GstWidget(pipeline), True, True, 0)
-        video_area.add(GstWidget(pipeline))
 
         self.relation_widget.connect('draw', self._draw_relation_widget)
         GLib.timeout_add(1000/30, self._sced)
@@ -66,16 +58,22 @@ class AppWindow(Gtk.ApplicationWindow):
 
         return True
 
+    def start_video(self, pipeline):
+        video_area = builder.get_object('video_area')
+        video_area.add(GstWidget(pipeline))
+
 
 class Application(Gtk.Application):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__(application_id='ksurct.basestation')
 
         self.window = None
+        self.config = config
 
     def do_activate(self):
         if not self.window:
             self.window = AppWindow(application=self, title="ksurct Basestation")
+            self.window.start_video(self.config['video_pipeline'])
             self.window.show_all()
 
         self.window.present()
