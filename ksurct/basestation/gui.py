@@ -25,16 +25,18 @@ class AppWindow(Gtk.ApplicationWindow):
         video_area = builder.get_object('video_area')
         self.relation_widget = builder.get_object('relation_widget')
 
-        self.widget_log = builder.get_object('log')
+        self.buffer_log = builder.get_object('log')
 
         self.set_icon_from_file(str(here/'icons'/'ksurct.png'))
         self.add(main_box)
         self.set_titlebar(self._create_header())
 
-        video_area.pack_start(GstWidget(pipeline), True, True, 0)
+        # video_area.pack_start(GstWidget(pipeline), True, True, 0)
+        video_area.add(GstWidget(pipeline))
 
         self.relation_widget.connect('draw', self._draw_relation_widget)
         GLib.timeout_add(1000/30, self._sced)
+        GLib.timeout_add(1000/4, self.show_log, 'asdf\n')
 
     def _create_header(self):
         header = builder.get_object('header')
@@ -54,6 +56,15 @@ class AppWindow(Gtk.ApplicationWindow):
         cairo.set_source_rgb(1, 0, 0)
         cairo.rectangle(20, 20, 20, 20 + 10*(time()%40))
         cairo.stroke()
+
+    def show_log(self, msg):
+        i = self.buffer_log.get_start_iter()
+        self.buffer_log.insert(i, msg)
+
+        i.set_line(100)
+        self.buffer_log.delete(i, self.buffer_log.get_end_iter())
+
+        return True
 
 
 class Application(Gtk.Application):

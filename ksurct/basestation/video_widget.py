@@ -4,7 +4,7 @@ Gst.init(None)
 Gst.init_check(None)
 
 
-class GstWidget(Gtk.Box):
+class GstWidget(Gtk.Bin):
     def __init__(self, pipeline):
         super().__init__()
         self.connect('realize', self._on_realize)
@@ -17,6 +17,6 @@ class GstWidget(Gtk.Box):
         pipeline.add(gtksink)
         pipeline.add(self._bin)
         self._bin.link(gtksink)
-        self.pack_start(gtksink.props.widget, True, True, 0)
+        self.add(gtksink.props.widget)
         gtksink.props.widget.show()
         pipeline.set_state(Gst.State.PLAYING)

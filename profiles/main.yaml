@@ -1,0 +1,3 @@
+video_pipeline: udpsrc port=$PORT ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! videoconvert
+control_port: 9002
+video_port: 9001

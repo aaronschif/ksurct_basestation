@@ -2,6 +2,7 @@
 <!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
+  <object class="GtkTextBuffer" id="log"/>
   <object class="GtkBox" id="main_box">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -11,12 +12,13 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <child>
-          <object class="GtkBox" id="video_area">
+          <object class="GtkAlignment" id="video_area">
             <property name="width_request">640</property>
             <property name="height_request">480</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <child>
               <placeholder/>
             </child>
@@ -45,10 +47,20 @@
       </packing>
     </child>
     <child>
-      <object class="GtkTextView" id="log">
+      <object class="GtkScrolledWindow" id="scrolledwindow1">
         <property name="height_request">200</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can_focus">True</property>
+        <property name="shadow_type">in</property>
+        <child>
+          <object class="GtkTextView" id="log_widget">
+            <property name="height_request">200</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="buffer">log</property>
+            <property name="monospace">True</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">True</property>
