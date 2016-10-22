@@ -46,7 +46,7 @@ class AppWindow(Gtk.ApplicationWindow):
         cairo.set_source_rgb(.5, .5, .5)
         cairo.paint()
         cairo.set_source_rgb(1, 0, 0)
-        cairo.rectangle(20, 20, 20, 20 + 10*(time()%40))
+        cairo.rectangle(20, 20, 20, 20 + 10*(time() % 40))
         cairo.stroke()
 
     def show_log(self, msg):
