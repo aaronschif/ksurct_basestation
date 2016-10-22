@@ -1,12 +1,13 @@
-from time import sleep
+import asyncio
 from threading import Thread
 
 
 class Server(Thread):
-    def __init__(self):
+    def __init__(self, config, channel):
         super().__init__(daemon=True)
+        self.config = config
+        self.channel = channel
 
     def run(self):
-        while True:
-            sleep(1)
-            print(1)
+        loop = asyncio.new_event_loop()
+        self.channel.aio_init(loop)

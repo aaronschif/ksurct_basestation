@@ -64,7 +64,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
 
 class Application(Gtk.Application):
-    def __init__(self, config):
+    def __init__(self, config, channel):
         super().__init__(application_id='ksurct.basestation')
 
         self.window = None
