@@ -6,6 +6,23 @@ from .xbox import Controller
 Controller.init()
 
 
+class XboxComponent(object):
+    def __init__(self, **kwargs):
+        self.parts = kwargs
+        self.state = {k: None for k in kwargs}
+
+    def check_updates(self):
+        needs_update = False
+        for k, v in self.parts.items():
+            new_value = v()
+            old_value = self.state[k]
+            if new_value != old_value:
+                needs_update = True
+
+            self.state[k] = new_value
+        return needs_update
+
+
 class Server(Thread):
     def __init__(self, config, channel):
         super().__init__(daemon=True)
@@ -22,7 +39,10 @@ class Server(Thread):
         loop.close()
 
     async def main_loop(self):
+        lights = XboxComponent(on=self.xbox.get_y)
         while True:
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(.1)
             self.xbox.update()
-            print(self.xbox.formatted_state())
+
+            if lights.check_updates():
+                print(lights.state['on'])

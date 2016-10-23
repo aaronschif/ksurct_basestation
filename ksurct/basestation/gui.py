@@ -42,11 +42,16 @@ class AppWindow(Gtk.ApplicationWindow):
         return True
 
     def _draw_relation_widget(self, widget, cairo):
-        from time import time
-        cairo.set_source_rgb(.5, .5, .5)
-        cairo.paint()
+        cairo.set_source_rgb(.9, .9, .9)
+        cairo.paint()  # Grey background
+        cairo.set_source_rgb(.1, .1, .1)
+        cairo.rectangle(50, 200, 100, 140)
+        cairo.stroke()
         cairo.set_source_rgb(1, 0, 0)
-        cairo.rectangle(20, 20, 20, 20 + 10*(time() % 40))
+        cairo.move_to(54, 190)
+        cairo.line_to(54, 100)
+        cairo.move_to(146, 190)
+        cairo.line_to(146, 100)
         cairo.stroke()
 
     def show_log(self, msg):

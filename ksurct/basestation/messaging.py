@@ -23,7 +23,7 @@ class Channel(object):
     def gtk_add_callback(self):
         pass
 
-    def gtk_send_msg(self, type, msg):
+    def gtk_send_msg(self, msg):
         pass
 
     def aio_init(self, loop):
@@ -37,5 +37,5 @@ class Channel(object):
     def aio_wait_msg(self):
         pass
 
-    def aio_send_msg(self):
+    def aio_send_msg(self, msg):
         pass
