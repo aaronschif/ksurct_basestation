@@ -14,14 +14,14 @@ Controller.init()
 class Toggle(object):
     def __init__(self, cb):
         self.state = False
-        self.callback = cb
+        self.cb = cb
 
     def __call__(self):
         self.state ^= self.cb()
         return self.state
 
 
-def calculate_motor_speed(self, x, y, mod):
+def calculate_motor_speed(x, y, mod):
         r, l = -y, -y
         r += -x/4
         l += x/4
@@ -56,7 +56,7 @@ class Server(Thread):
         motors = lambda: calculate_motor_speed(x=self.xbox.get_left_x(), y=self.xbox.get_left_y(), mod=self.xbox.get_x())
         trigger_arm = lambda: self.xbox.get_right_trigger() > 0.9
         close_claw = self.xbox.get_a
-        degree_camera = lambda: controller.get_right_x() * 190
+        camera_degree = lambda: self.xbox.get_right_x() * 190
 
         async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
             while True:
