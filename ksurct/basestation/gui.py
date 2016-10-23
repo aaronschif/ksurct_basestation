@@ -1,7 +1,6 @@
 import pkgutil
 from pathlib import Path
 
-from . import gi_init  # noqa
 from gi.repository import Gtk, GLib
 
 from .video_widget import GstWidget

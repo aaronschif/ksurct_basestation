@@ -1,5 +1,8 @@
-from janus import Queue
 from threading import Event
+from collections import namedtuple
+
+from janus import Queue
+from gi.repository import GLib
 
 
 class Channel(object):
@@ -11,6 +14,8 @@ class Channel(object):
         self._gtk_ready = Event()
         self._gtk_ready.clear()
 
+        self.gtk_callbacks = set()
+
     def gtk_init(self, loop):
         self._gtk_ready.set()
 
@@ -20,8 +25,8 @@ class Channel(object):
     def complete_gtk_init(self):
         self._gtk_ready.set()
 
-    def gtk_add_callback(self):
-        pass
+    def gtk_add_callback(self, cb):
+        self.gtk_callbacks.add(cb)
 
     def gtk_send_msg(self, msg):
         pass
@@ -39,3 +44,6 @@ class Channel(object):
 
     def aio_send_msg(self, msg):
         pass
+
+
+NewSensorData = namedtuple('NewSensorData', ['left', 'right'])

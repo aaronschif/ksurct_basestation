@@ -1,7 +1,11 @@
 import asyncio
 from threading import Thread
+from contextlib import suppress
+
+import websockets
 
 from .xbox import Controller
+from .proto.main_pb2 import BaseStation
 
 Controller.init()
 
@@ -40,9 +44,18 @@ class Server(Thread):
 
     async def main_loop(self):
         lights = XboxComponent(on=self.xbox.get_y)
-        while True:
-            await asyncio.sleep(.1)
-            self.xbox.update()
 
-            if lights.check_updates():
-                print(lights.state['on'])
+        async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
+            while True:
+                self.xbox.update()
+
+                if lights.check_updates():
+                    print(lights.state['on'])
+
+                with suppress(asyncio.TimeoutError):
+                    msg = await asyncio.wait_for(websocket.recv(), .1)
+                    base_msg = BaseStation()
+                    base_msg.ParseFromString(msg)
+
+                    print("SD left ", base_msg.sensor_data.front_left)
+                    print("SD right ", base_msg.sensor_data.front_right)
