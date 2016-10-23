@@ -16,7 +16,7 @@ class Channel(object):
 
         self.gtk_callbacks = set()
 
-    def gtk_init(self, loop):
+    def gtk_init(self):
         self._gtk_ready.set()
 
     def wait_gtk_init(self):
@@ -43,7 +43,9 @@ class Channel(object):
         pass
 
     def aio_send_msg(self, msg):
-        pass
+        self._gtk_ready.wait()
+        for callback in self.gtk_callbacks:
+            GLib.idle_add(callback, msg)
 
 
 NewSensorData = namedtuple('NewSensorData', ['left', 'right'])

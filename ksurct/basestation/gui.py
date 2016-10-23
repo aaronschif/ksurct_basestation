@@ -27,7 +27,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.relation_widget.connect('draw', self._draw_relation_widget)
         GLib.timeout_add(1000/30, self._sced)
-        GLib.timeout_add(1000/4, self.show_log, 'asdf\n')
+
+        self.robot_state = {
+            'left_sensor': 0,
+            'right_sensor': 0,
+        }
 
     def _create_header(self):
         header = builder.get_object('header')
@@ -47,10 +51,10 @@ class AppWindow(Gtk.ApplicationWindow):
         cairo.rectangle(50, 200, 100, 140)
         cairo.stroke()
         cairo.set_source_rgb(1, 0, 0)
-        cairo.move_to(54, 190)
-        cairo.line_to(54, 100)
-        cairo.move_to(146, 190)
-        cairo.line_to(146, 100)
+        cairo.move_to(54, 200)
+        cairo.line_to(54, 200 - self.robot_state['left_sensor'])
+        cairo.move_to(146, 200)
+        cairo.line_to(146, 200 - self.robot_state['right_sensor'])
         cairo.stroke()
 
     def show_log(self, msg):
@@ -66,6 +70,10 @@ class AppWindow(Gtk.ApplicationWindow):
         video_area = builder.get_object('video_area')
         video_area.add(GstWidget(pipeline))
 
+    def draw_relationships(self, msg):
+        self.robot_state['left_sensor'] = msg.left
+        self.robot_state['right_sensor'] = msg.right
+
 
 class Application(Gtk.Application):
     def __init__(self, config, channel):
@@ -73,11 +81,14 @@ class Application(Gtk.Application):
 
         self.window = None
         self.config = config
+        self.channel = channel
 
     def do_activate(self):
         if not self.window:
             self.window = AppWindow(application=self, title="ksurct Basestation")
             self.window.start_video(self.config['video_pipeline'])
             self.window.show_all()
+            self.channel.gtk_add_callback(self.window.draw_relationships)
+            self.channel.gtk_init()
 
         self.window.present()

@@ -5,7 +5,8 @@ from contextlib import suppress
 import websockets
 
 from .xbox import Controller
-from .proto.main_pb2 import BaseStation
+from .proto.main_pb2 import BaseStation, Robot
+from .messaging import NewSensorData
 
 Controller.init()
 
@@ -49,13 +50,22 @@ class Server(Thread):
             while True:
                 self.xbox.update()
 
+                robot_msg = Robot()
+
                 if lights.check_updates():
-                    print(lights.state['on'])
+                    robot_msg.headlights.update = True
+                    robot_msg.headlights.on = lights.state['on']
+
+                ser_msg = robot_msg.SerializeToString()
+
+                await websocket.send(ser_msg)
 
                 with suppress(asyncio.TimeoutError):
                     msg = await asyncio.wait_for(websocket.recv(), .1)
                     base_msg = BaseStation()
                     base_msg.ParseFromString(msg)
 
-                    print("SD left ", base_msg.sensor_data.front_left)
-                    print("SD right ", base_msg.sensor_data.front_right)
+                    self.channel.aio_send_msg(NewSensorData(
+                        left=base_msg.sensor_data.front_left,
+                        right=base_msg.sensor_data.front_right,
+                    ))
