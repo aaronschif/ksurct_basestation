@@ -1,5 +1,6 @@
 import pkgutil
 from pathlib import Path
+from threading import Thread
 
 from gi.repository import Gtk, GLib
 
@@ -88,7 +89,24 @@ class Application(Gtk.Application):
             self.window = AppWindow(application=self, title="ksurct Basestation")
             self.window.start_video(self.config['video_pipeline'])
             self.window.show_all()
-            self.channel.gtk_add_callback(self.window.draw_relationships)
-            self.channel.gtk_init()
+            # self.channel.gtk_add_callback(self.window.draw_relationships)
+            # self.channel.gtk_init()
 
         self.window.present()
+
+    def do_shutdown(self):
+        exit()
+
+
+class GuiThread(Thread):
+    def __init__(self, config, channel):
+        super().__init__(daemon=True)
+        self.config = config
+        self.channel = channel
+        self.application = Application(self.config, self.channel)
+
+    def run(self):
+        self.application.run()
+
+    def stop(self):
+        self.application.quit()

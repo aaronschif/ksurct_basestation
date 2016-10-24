@@ -2,7 +2,7 @@ import sys
 import yaml
 
 from .server import Server
-from .gui import Application
+from .gui import GuiThread
 from .messaging import Channel
 
 
@@ -14,9 +14,12 @@ class Controller(object):
 
         self.channel = Channel()
         self.server = Server(config, self.channel)
-        self.application = Application(config, self.channel)
+        self.application = GuiThread(config, self.channel)
 
     def begin(self):
-        self.server.start()
-        self.channel.wait_aio_init()
-        self.application.run()
+        try:
+            self.application.start()
+            self.server.run()
+        finally:
+            self.application.stop()
+            self.application.join()

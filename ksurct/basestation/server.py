@@ -1,5 +1,4 @@
 import asyncio
-from threading import Thread
 from contextlib import suppress
 
 import websockets
@@ -35,9 +34,8 @@ def calculate_motor_speed(x, y, mod):
         return r, l
 
 
-class Server(Thread):
+class Server(object):
     def __init__(self, config, channel):
-        super().__init__(daemon=True)
         self.config = config
         self.channel = channel
         self.xbox = Controller(0)
