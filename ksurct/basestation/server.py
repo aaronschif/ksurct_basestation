@@ -55,8 +55,9 @@ class Server(Thread):
         breaks = self.xbox.get_b
         motors = lambda: calculate_motor_speed(x=self.xbox.get_left_x(), y=self.xbox.get_left_y(), mod=self.xbox.get_x())
         trigger_arm = lambda: self.xbox.get_right_trigger() > 0.9
-        close_claw = self.xbox.get_a
         camera_degree = lambda: self.xbox.get_right_x() * 190
+        close_claw = Toggle(lambda: 'd' in self.xbox.get_dpad())
+        wrist_degree = Toggle(lambda: 'r' in self.xbox.get_dpad())
 
         async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
             while True:
@@ -80,6 +81,9 @@ class Server(Thread):
 
                 robot_msg.arm.update = True
                 robot_msg.arm.degree = 5304 if trigger_arm() else 3120
+
+                robot_msg.wrist.update = True
+                robot_msg.wrist.degree = 171 * wrist_degree()
 
                 robot_msg.camera.update = True
                 robot_msg.camera.degree = 190 - int(camera_degree())
