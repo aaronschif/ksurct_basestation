@@ -3,7 +3,7 @@ from contextlib import suppress
 
 import websockets
 
-from .xbox import Controller
+from .xbox2 import Controller
 from .proto.main_pb2 import BaseStation, Robot
 from .messaging import NewSensorData
 
@@ -49,12 +49,12 @@ class Server(object):
         loop.close()
 
     async def main_loop(self):
-        lights = Toggle(self.xbox.get_y)
-        breaks = self.xbox.get_b
-        motors = lambda: calculate_motor_speed(x=self.xbox.get_left_x(), y=self.xbox.get_left_y(), mod=self.xbox.get_x())
-        trigger_arm = lambda: self.xbox.get_right_trigger() > 0.9
-        close_claw = self.xbox.get_a
-        camera_degree = lambda: self.xbox.get_right_x() * 190
+        lights = Toggle(self.xbox.y)
+        breaks = self.xbox.b
+        motors = lambda: calculate_motor_speed(x=self.xbox.left_x(), y=self.xbox.left_y(), mod=self.xbox.x())
+        trigger_arm = self.xbox.right_trigger
+        close_claw = self.xbox.a
+        camera_degree = lambda: self.xbox.right_x() * 190
 
         async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
             while True:

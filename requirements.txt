@@ -1,3 +1,5 @@
 janus
 pyyaml
 pysdl2
+websockets
+protobuf
