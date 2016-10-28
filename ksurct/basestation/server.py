@@ -55,6 +55,8 @@ class Server(object):
         trigger_arm = self.xbox.right_trigger
         close_claw = self.xbox.a
         camera_degree = lambda: self.xbox.right_x() * 190
+        # wrist_degree = self.xbox.dpad()
+        wrist_degree = lambda: False
 
         async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
             while True:
@@ -78,6 +80,9 @@ class Server(object):
 
                 robot_msg.arm.update = True
                 robot_msg.arm.degree = 5304 if trigger_arm() else 3120
+
+                robot_msg.wrist.update = True
+                robot_msg.wrist.degree = 171 * wrist_degree()
 
                 robot_msg.camera.update = True
                 robot_msg.camera.degree = 190 - int(camera_degree())

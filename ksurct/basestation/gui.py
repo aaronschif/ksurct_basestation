@@ -46,16 +46,21 @@ class AppWindow(Gtk.ApplicationWindow):
         return True
 
     def _draw_relation_widget(self, widget, cairo):
+        ROBOT_HEIGHT = 29
+        ROBOT_WIDTH = 15
+        SCALE = 4
+        START_X = 60
+        START_Y = 200
         cairo.set_source_rgb(.9, .9, .9)
         cairo.paint()  # Grey background
         cairo.set_source_rgb(.1, .1, .1)
-        cairo.rectangle(50, 200, 100, 140)
+        cairo.rectangle(START_X, START_Y, ROBOT_WIDTH*SCALE, ROBOT_HEIGHT*SCALE)
         cairo.stroke()
         cairo.set_source_rgb(1, 0, 0)
-        cairo.move_to(54, 200)
-        cairo.line_to(54, 200 - self.robot_state['left_sensor'])
-        cairo.move_to(146, 200)
-        cairo.line_to(146, 200 - self.robot_state['right_sensor'])
+        cairo.move_to(START_X + 4, START_Y)
+        cairo.line_to(START_X + 4, START_Y - self.robot_state['left_sensor'] * SCALE)
+        cairo.move_to(START_X + ROBOT_WIDTH * SCALE - 4, START_Y)
+        cairo.line_to(START_X + ROBOT_WIDTH * SCALE - 4, START_Y - self.robot_state['right_sensor'] * SCALE)
         cairo.stroke()
 
     def show_log(self, msg):
