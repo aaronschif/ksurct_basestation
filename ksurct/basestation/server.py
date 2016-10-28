@@ -3,7 +3,7 @@ from contextlib import suppress
 
 import websockets
 
-from .xbox2 import Controller
+from .xbox2 import Controller, ToggleButtonState
 from .proto.main_pb2 import BaseStation, Robot
 from .messaging import NewSensorData
 
@@ -39,6 +39,7 @@ class Server(object):
         self.config = config
         self.channel = channel
         self.xbox = Controller(0)
+        self.xbox.y = ToggleButtonState()
 
     def run(self):
         loop = asyncio.new_event_loop()

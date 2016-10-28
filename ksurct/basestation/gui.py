@@ -94,8 +94,8 @@ class Application(Gtk.Application):
             self.window = AppWindow(application=self, title="ksurct Basestation")
             self.window.start_video(self.config['video_pipeline'])
             self.window.show_all()
-            # self.channel.gtk_add_callback(self.window.draw_relationships)
-            # self.channel.gtk_init()
+            self.channel.gtk_add_callback(self.window.draw_relationships)
+            self.channel.gtk_init()
 
         self.window.present()
 
