@@ -1,5 +1,5 @@
-# video_pipeline: udpsrc port=9001 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! videoconvert
+video_pipeline: udpsrc port=9001 ! application/x-rtp, payload=12 ! rtph264depay ! avdec_h264 ! videoconvert
 # video_pipeline: tcpclientsrc host=10.243.81.158 port=9001 ! h264parse ! avdec_h264 ! autovideoconvert
-video_pipeline: videotestsrc
+# video_pipeline: videotestsrc
 control_port: 9002
 video_port: 9001

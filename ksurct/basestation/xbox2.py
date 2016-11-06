@@ -94,7 +94,7 @@ class DecimalAxisState(AbstractState):
         else:
             normal = -normal / (self.VAR_MIN - self.zero_value)
 
-        if isclose(normal, 0, abs_tol=0.03):
+        if isclose(normal, 0, abs_tol=0.04):
             return 0
         return normal
 

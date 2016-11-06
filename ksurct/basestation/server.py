@@ -21,13 +21,13 @@ class Toggle(object):
 
 
 def calculate_motor_speed(x, y, mod):
-        r, l = -y, -y
-        r += -x/4
-        l += x/4
+        r, l = y, y
+        r += x/1
+        l += -x/1
 
-        modifier = 120
+        modifier = 120*2
         if mod:
-            modifier = 60
+            modifier /= 2
 
         r = int(r*modifier)
         l = int(l*modifier)
@@ -57,13 +57,21 @@ class Server(object):
         close_claw = self.xbox.a
         camera_degree = lambda: self.xbox.right_x() * 190
         # wrist_degree = self.xbox.dpad()
-        wrist_degree = lambda: False
+        wrist_degree = Toggle(lambda: 'u' in self.xbox.hat())
+        # wrist_degree = lambda: True
 
         async with websockets.connect('ws://10.243.81.158:9002/') as websocket:
+            video_feed_init = False
             while True:
                 self.xbox.update()
 
                 robot_msg = Robot()
+
+                if video_feed_init is False:
+                    robot_msg.video_feed = False
+                    video_feed_init = True
+                else:
+                    robot_msg.video_feed = True
 
                 robot_msg.headlights.update = True
                 robot_msg.headlights.on = lights()
